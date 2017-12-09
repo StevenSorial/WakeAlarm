@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen
+	xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<RingtonePreference
+		android:defaultValue="content://settings/system/alarm_alert"
+		android:key="@string/pref_key_ringtone"
+		android:ringtoneType="ringtone|alarm"
+		android:showDefault="true"
+		android:showSilent="false"
+		android:title="@string/pref_title_ringtone"/>
+	<ListPreference
+		android:defaultValue="@string/pref_theme_default"
+		android:entries="@array/pref_theme_labels"
+		android:entryValues="@array/pref_theme_values"
+		android:key="@string/pref_key_theme"
+		android:title="@string/pref_title_theme"/>
+
+</android.support.v7.preference.PreferenceScreen>
