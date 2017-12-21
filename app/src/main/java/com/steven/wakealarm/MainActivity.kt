@@ -10,48 +10,93 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.widget.CompoundButton
+import android.widget.RadioGroup
 import android.widget.TimePicker
+import com.google.zxing.integration.android.IntentIntegrator
 import com.steven.wakealarm.base.BaseActivity
 import com.steven.wakealarm.settings.SettingsActivity
+import com.steven.wakealarm.utils.PREFS_CHALLENGE
+import com.steven.wakealarm.utils.PREFS_ENABLED
+import com.steven.wakealarm.utils.PREFS_HOURS
+import com.steven.wakealarm.utils.PREFS_MINUTES
+import com.steven.wakealarm.utils.checkedRadioIndex
+import com.steven.wakealarm.utils.formatTimeLeft
+import com.steven.wakealarm.utils.getScheduledCalendar
+import com.steven.wakealarm.utils.is19OrLater
+import com.steven.wakealarm.utils.is21OrLater
+import com.steven.wakealarm.utils.setTooltip
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity(), OnSharedPreferenceChangeListener {
 
-	private var alarmManager: AlarmManager? = null
+	private lateinit var alarmManager: AlarmManager
+
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_main)
-		prefs?.registerOnSharedPreferenceChangeListener(this)
-		alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager?
-		settingsButton?.setOnClickListener {
+		prefs.registerOnSharedPreferenceChangeListener(this)
+		alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+		settingsButton.setOnClickListener {
 			startActivity(Intent(this, SettingsActivity::class.java))
 		}
 		DrawableCompat.setTint(settingsButton.drawable, if (theme == "dark") Color.LTGRAY else
 			Color.DKGRAY)
-		timePicker?.setIs24HourView(false)
-		timePicker?.currentHour = prefs?.getInt(PREFS_HOURS, 0)
-		timePicker?.currentMinute = prefs?.getInt(PREFS_MINUTES, 0)
-		switch_alarm?.isChecked = prefs!!.getBoolean(PREFS_ENABLED, false)
-		timePicker?.setOnTimeChangedListener { _: TimePicker, _: Int, _: Int ->
-			switch_alarm.isChecked = true
-			setRemainingTime()
-			scheduleAlarm()
+		timePicker.apply {
+			setIs24HourView(false)
+			currentHour = prefs.getInt(PREFS_HOURS, 0)
+			currentMinute = prefs.getInt(PREFS_MINUTES, 0)
+			setOnTimeChangedListener { _: TimePicker, _: Int, _: Int ->
+				switch_alarm.isChecked = true
+				setRemainingTime()
+				scheduleAlarm()
+			}
 		}
-		switch_alarm?.setOnCheckedChangeListener { _: CompoundButton?, b: Boolean ->
-			if (b) scheduleAlarm() else cancelAlarm()
+		challengeRadioGroup.apply {
+			checkedRadioIndex = prefs.getInt(PREFS_CHALLENGE, 0)
+			setOnCheckedChangeListener { radioGroup: RadioGroup, i: Int ->
+				prefs.edit().putInt(PREFS_CHALLENGE, radioGroup.checkedRadioIndex).apply()
+				if (radioGroup.checkedRadioIndex == 1
+						&& prefs.getString(getString(R.string.pref_key_barcode), "").isEmpty()) {
+					IntentIntegrator(this@MainActivity).initiateScan()
+				}
+			}
 		}
+		switch_alarm.apply {
+			isChecked = prefs.getBoolean(PREFS_ENABLED, false)
+			setOnCheckedChangeListener { _: CompoundButton?, b: Boolean ->
+				if (b) scheduleAlarm() else cancelAlarm()
+			}
+		}
+		challengeBarcodeRadio.setTooltip(getString(R.string.barcode))
+		challengeNoneRadio.setTooltip(getString(R.string.none))
+		settingsButton.setTooltip("Settings")
+
 	}
 
 	override fun onResume() {
 		super.onResume()
-		if (prefs?.getBoolean(PREFS_ENABLED, false) == true) {
+		if (prefs.getBoolean(PREFS_ENABLED, false)) {
 			setRemainingTime()
+		}
+	}
+
+	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+		super.onActivityResult(requestCode, resultCode, data)
+		val barcodeResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
+		if (barcodeResult != null) {
+			if (barcodeResult.contents != null) {
+				prefs.edit()
+						.putString(getString(R.string.pref_key_barcode), barcodeResult.contents)
+						.apply()
+			} else {
+				challengeRadioGroup.checkedRadioIndex = 0
+			}
 		}
 	}
 
 	override fun onPause() {
 		super.onPause()
-		prefs?.edit()
+		prefs.edit()
 				?.putInt(PREFS_HOURS, timePicker.currentHour)
 				?.putInt(PREFS_MINUTES, timePicker.currentMinute)
 				?.putBoolean(PREFS_ENABLED, switch_alarm.isChecked)
@@ -60,13 +105,15 @@ class MainActivity : BaseActivity(), OnSharedPreferenceChangeListener {
 
 	override fun onDestroy() {
 		super.onDestroy()
-		prefs?.unregisterOnSharedPreferenceChangeListener(this)
+		prefs.unregisterOnSharedPreferenceChangeListener(this)
 	}
 
 	override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String?) {
-		if (key == getString(R.string.pref_key_theme)) {
-			startActivity(Intent(this, MainActivity::class.java))
-			finish()
+		when (key) {
+			getString(R.string.pref_key_theme) -> {
+				startActivity(Intent(this, MainActivity::class.java))
+				finish()
+			}
 		}
 	}
 
@@ -86,22 +133,21 @@ class MainActivity : BaseActivity(), OnSharedPreferenceChangeListener {
 			val showIntent = Intent(applicationContext, MainActivity::class.java)
 			val showPendingIntent = PendingIntent.getActivity(applicationContext, 0, showIntent,
 					0)
-			alarmManager?.setAlarmClock(
-					AlarmManager.AlarmClockInfo(calendar.timeInMillis,
-							showPendingIntent), pendingIntent)
+			alarmManager.setAlarmClock(
+					AlarmManager.AlarmClockInfo(
+							calendar.timeInMillis, showPendingIntent), pendingIntent)
 		} else if (is19OrLater()) {
-			alarmManager?.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+			alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
 		} else {
-			alarmManager?.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+			alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
 		}
-
 	}
 
 	private fun cancelAlarm() {
 		val intent = Intent(this, AlarmService::class.java)
 		val pendingIntent = PendingIntent.getService(applicationContext, 1, intent,
 				0)
-		alarmManager?.cancel(pendingIntent)
+		alarmManager.cancel(pendingIntent)
 		RemainingTimeTV?.text = ""
 	}
 }

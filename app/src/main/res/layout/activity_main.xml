@@ -15,17 +15,47 @@
 		app:layout_constraintStart_toStartOf="parent"
 		app:layout_constraintTop_toTopOf="parent"/>
 
-	<ImageButton
-		android:id="@+id/settingsButton"
-		android:layout_width="24dp"
-		android:layout_height="24dp"
-		android:background="?attr/selectableItemBackgroundBorderless"
-		android:scaleType="fitXY"
-		android:src="@drawable/ic_settings_black_48dp"
-		app:layout_constraintBottom_toBottomOf="parent"
+	<RadioGroup
+		android:id="@+id/challengeRadioGroup"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		app:layout_constraintBottom_toTopOf="@+id/RemainingTimeTV"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/switch_alarm"/>
+		app:layout_constraintTop_toBottomOf="@+id/timePicker">
+
+		<android.support.v7.widget.AppCompatTextView
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:gravity="center"
+			android:text="Challenge"/>
+
+		<android.support.v7.widget.AppCompatRadioButton
+			android:id="@+id/challengeNoneRadio"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:drawableEnd="@drawable/block_black_24dp"
+			android:drawableRight="@drawable/block_black_24dp"/>
+
+		<android.support.v7.widget.AppCompatRadioButton
+			android:id="@+id/challengeBarcodeRadio"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:drawableEnd="@drawable/barcode_black_24dp"
+			android:drawableRight="@drawable/barcode_black_24dp"
+			android:gravity="center"/>
+	</RadioGroup>
+
+	<android.support.v7.widget.AppCompatTextView
+		android:id="@+id/RemainingTimeTV"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		app:layout_constraintBottom_toTopOf="@+id/switch_alarm"
+		app:layout_constraintEnd_toEndOf="parent"
+		app:layout_constraintStart_toStartOf="parent"
+		app:layout_constraintTop_toBottomOf="@+id/challengeRadioGroup"
+		tools:text="dsfsdfsfsfsfksjfnsnfks"/>
 
 	<android.support.v7.widget.SwitchCompat
 		android:id="@+id/switch_alarm"
@@ -38,14 +68,16 @@
 		app:layout_constraintRight_toRightOf="parent"
 		app:layout_constraintTop_toBottomOf="@+id/RemainingTimeTV"/>
 
-	<TextView
-		android:id="@+id/RemainingTimeTV"
+	<android.support.v7.widget.AppCompatImageButton
+		android:id="@+id/settingsButton"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		app:layout_constraintBottom_toTopOf="@+id/switch_alarm"
+		android:background="?attr/selectableItemBackgroundBorderless"
+		android:scaleType="fitXY"
+		android:src="@drawable/settings_black_24dp"
+		app:layout_constraintBottom_toBottomOf="parent"
 		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintHorizontal_bias="0.5"
 		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toBottomOf="@+id/timePicker"
-		tools:text="dsfsdfsfsfsfksjfnsnfks"/>
+		app:layout_constraintTop_toBottomOf="@+id/switch_alarm"/>
+
 </android.support.constraint.ConstraintLayout>

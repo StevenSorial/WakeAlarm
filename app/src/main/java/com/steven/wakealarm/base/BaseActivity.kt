@@ -10,12 +10,12 @@ import com.steven.wakealarm.R
 abstract class BaseActivity : AppCompatActivity() {
 
 	protected val TAG: String = javaClass.simpleName
-	protected var prefs: SharedPreferences? = null
+	protected lateinit var prefs: SharedPreferences
 	protected var theme: String? = null
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		prefs = PreferenceManager.getDefaultSharedPreferences(this)
-		theme = prefs?.getString(getString(R.string.pref_key_theme), "light")
+		theme = prefs.getString(getString(R.string.pref_key_theme), "light")
 		setTheme(if (theme == "dark") R.style.DarkTheme else R.style.LightTheme)
 		Log.d(TAG, "Activity Created")
 	}

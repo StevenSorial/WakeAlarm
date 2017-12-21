@@ -14,6 +14,9 @@ import android.os.IBinder
 import android.preference.PreferenceManager
 import android.support.v4.app.NotificationCompat
 import android.util.Log
+import com.steven.wakealarm.utils.PREFS_ENABLED
+import com.steven.wakealarm.utils.is21OrLater
+import com.steven.wakealarm.utils.setVolume
 import java.lang.Exception
 import kotlin.math.log
 
@@ -25,21 +28,21 @@ class AlarmService : Service() {
 
 	override fun onBind(intent: Intent?): IBinder? = null
 
-	private var am: AudioManager? = null
-	private var sharedPreferences: SharedPreferences? = null
-	private var mp: MediaPlayer? = null
+	private lateinit var am: AudioManager
+	private lateinit var sharedPreferences: SharedPreferences
+	private lateinit var mp: MediaPlayer
 	private var currentStep = 0.0
 	private val maxStep = 50.0
-	private var originalVolume: Int? = null
+	private var originalVolume: Int = 0
 	private val handler = Handler()
 	private val fadeInRunnable = object : Runnable {
 		override fun run() {
-			am?.setStreamVolume(AudioManager.STREAM_ALARM, am!!.getStreamMaxVolume(AudioManager
+			am.setStreamVolume(AudioManager.STREAM_ALARM, am.getStreamMaxVolume(AudioManager
 					.STREAM_ALARM), 0)
-			if (mp?.isPlaying == true && currentStep < maxStep) {
+			if (mp.isPlaying && currentStep < maxStep) {
 				currentStep += 1
-				val vol = getVolumeForStep()
-				mp?.setVolume(vol.toFloat())
+				val vol = getVolumeForStep().toFloat()
+				mp.setVolume(vol)
 				Log.d(TAG, vol.toString())
 			}
 			handler.postDelayed(this, VOLUME_STEP_DELAY)
@@ -51,7 +54,7 @@ class AlarmService : Service() {
 		Log.d(TAG, "Service Created")
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
 		am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
-		originalVolume = am?.getStreamVolume(AudioManager.STREAM_ALARM)
+		originalVolume = am.getStreamVolume(AudioManager.STREAM_ALARM)
 	}
 
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -67,11 +70,10 @@ class AlarmService : Service() {
 
 	override fun onDestroy() {
 		handler.removeCallbacksAndMessages(null)
-		mp?.stop()
-		mp?.release()
-		mp = null
-		am?.setStreamVolume(AudioManager.STREAM_ALARM, originalVolume!!, 0)
-		sharedPreferences?.edit()
+		mp.stop()
+		mp.release()
+		am.setStreamVolume(AudioManager.STREAM_ALARM, originalVolume, 0)
+		sharedPreferences.edit()
 				?.putBoolean(PREFS_ENABLED, false)
 				?.apply()
 		super.onDestroy()
@@ -79,31 +81,31 @@ class AlarmService : Service() {
 	}
 
 	private fun playAlarm() {
-		val ringuri = sharedPreferences?.getString("ringtone", "")
+		val ringuri = sharedPreferences.getString("ringtone", "")
 		Log.d(TAG, ringuri)
 
 
 		mp = MediaPlayer()
 		try {
-			mp?.setDataSource(this, Uri.parse(ringuri))
+			mp.setDataSource(this, Uri.parse(ringuri))
 		} catch (e: Exception) {
 			stopSelf()
 			return
 		}
-		mp?.isLooping = true
+		mp.isLooping = true
 
 		if (is21OrLater()) {
-			mp?.setAudioAttributes(AudioAttributes.Builder()
+			mp.setAudioAttributes(AudioAttributes.Builder()
 					.setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
 					.setUsage(AudioAttributes.USAGE_ALARM)
 					.build())
 		} else {
-			mp?.setAudioStreamType(AudioManager.STREAM_ALARM)
+			mp.setAudioStreamType(AudioManager.STREAM_ALARM)
 		}
-		mp?.setVolume(0f)
-		mp?.prepare()
-		mp?.start()
-		am?.setStreamVolume(AudioManager.STREAM_ALARM, am!!.getStreamMaxVolume(AudioManager
+		mp.setVolume(0f)
+		mp.prepare()
+		mp.start()
+		am.setStreamVolume(AudioManager.STREAM_ALARM, am.getStreamMaxVolume(AudioManager
 				.STREAM_ALARM), 0)
 		handler.postDelayed(fadeInRunnable, VOLUME_STEP_DELAY)
 	}

@@ -1,5 +1,6 @@
 package com.steven.wakealarm.base
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log

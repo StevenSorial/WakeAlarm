@@ -15,5 +15,9 @@
 		android:entryValues="@array/pref_theme_values"
 		android:key="@string/pref_key_theme"
 		android:title="@string/pref_title_theme"/>
-
+	<com.steven.wakealarm.settings.BarcodePreference
+		android:key="@string/pref_key_barcode"
+		android:summary="Current Barcode is %s"
+		android:title="@string/pref_title_barcode">
+	</com.steven.wakealarm.settings.BarcodePreference>
 </android.support.v7.preference.PreferenceScreen>

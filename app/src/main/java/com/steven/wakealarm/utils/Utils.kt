@@ -1,21 +1,25 @@
 @file:JvmName("Utils")
 
-package com.steven.wakealarm
+package com.steven.wakealarm.utils
 
-import android.app.AlarmManager
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.content.IntentFilter
-import android.media.MediaPlayer
 import android.os.BatteryManager
 import android.os.Build
 import android.telephony.TelephonyManager
-import java.util.*
+import java.util.Calendar
 
 const val PREFS_HOURS = "hours"
 const val PREFS_MINUTES = "minutes"
 const val PREFS_AM_PM = "am_pm"
 const val PREFS_ENABLED = "enabled"
+const val PREFS_CHALLENGE = "challenge"
+//const val PREFS_BARCODE = "barcode"
+
+const val PREFS_VERSION_CODE = "version_code"
 
 fun isDeviceCharging(context: Context): Boolean {
 	val intent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
@@ -26,7 +30,7 @@ fun isDeviceCharging(context: Context): Boolean {
 
 fun formatTimeLeft(millis: Long): String {
 	val hours = millis / (1000 * 60 * 60)
-	val minutes = millis / (1000 * 60) % 60
+	val minutes = (millis / (1000 * 60)) % 60
 	if (hours == 0L) return "$minutes Minutes Left"
 	else return "$hours Hours and $minutes Minutes Left"
 }
@@ -44,23 +48,16 @@ fun is24OrLater(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
 fun is26OrLater(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 
 fun getScheduledCalendar(hour: Int, minute: Int): Calendar {
-	val calendar = Calendar.getInstance()
-	calendar.set(Calendar.HOUR_OF_DAY, hour)
-	calendar.set(Calendar.MINUTE, minute)
-	calendar.set(Calendar.SECOND, 0)
-	calendar.set(Calendar.MILLISECOND, 0)
-	if (System.currentTimeMillis() > calendar.timeInMillis) {
-		calendar.add(Calendar.DATE, 1)
+	return Calendar.getInstance().apply {
+		set(Calendar.HOUR_OF_DAY, hour)
+		set(Calendar.MINUTE, minute)
+		set(Calendar.SECOND, 0)
+		set(Calendar.MILLISECOND, 0)
+		if (System.currentTimeMillis() > timeInMillis) {
+			add(Calendar.DATE, 1)
+		}
 	}
-	return calendar
 }
-
-fun scheduleAlarm(context: Context, hour: Int, minute: Int) {
-	val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager?
-	val cal = getScheduledCalendar(hour, minute)
-}
-
-fun MediaPlayer.setVolume(volume: Float) = setVolume(volume, volume)
 
 /**
  * @return `true` if the device is currently in a telephone call
@@ -75,3 +72,19 @@ fun setStatusBarIconPreLollipop(context: Context, enabled: Boolean) {
 	alarmChanged.putExtra("alarmSet", enabled)
 	context.sendBroadcast(alarmChanged)
 }
+
+fun getActivity(context: Context): Activity? {
+	var c = context
+	while (c is ContextWrapper) {
+		if (c is Activity) return c
+		c = c.baseContext
+	}
+	return null
+}
+//fun getActivity(context: Context): Activity? {
+//	if (context is AppCompatActivity) return context
+//	if (context is ContextWrapper) return getActivity(context.baseContext)
+//	return null
+//}
+//
+

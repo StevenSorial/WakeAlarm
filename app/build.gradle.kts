@@ -36,5 +36,6 @@ dependencies {
 	implementation("com.takisoft.fix:preference-v7:26.1.0.3")
 	implementation("com.takisoft.fix:preference-v7-ringtone:26.1.0.3")
 	implementation("com.android.support.constraint:constraint-layout:1.0.2")
-	implementation(kotlin("stdlib-jdk7", "1.2.0"))
+	implementation("com.google.zxing:android-integration:3.3.0")
+	implementation(kotlin("stdlib-jdk7", "1.2.10"))
 }

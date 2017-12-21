@@ -7,7 +7,13 @@ import android.content.Context
 import android.content.Intent
 import android.preference.PreferenceManager
 import android.util.Log
-import java.util.*
+import com.steven.wakealarm.utils.PREFS_ENABLED
+import com.steven.wakealarm.utils.PREFS_HOURS
+import com.steven.wakealarm.utils.PREFS_MINUTES
+import com.steven.wakealarm.utils.getScheduledCalendar
+import com.steven.wakealarm.utils.is19OrLater
+import com.steven.wakealarm.utils.is21OrLater
+import com.steven.wakealarm.utils.is24OrLater
 
 class BootReceiver : BroadcastReceiver() {
 
@@ -23,14 +29,8 @@ class BootReceiver : BroadcastReceiver() {
 		val alarmManager = context?.getSystemService(Context.ALARM_SERVICE) as AlarmManager?
 
 		if (!prefs.getBoolean(PREFS_ENABLED, false)) return
-		val calendar = Calendar.getInstance()
-		calendar.set(Calendar.HOUR_OF_DAY, prefs.getInt(PREFS_HOURS, 0))
-		calendar.set(Calendar.MINUTE, prefs.getInt(PREFS_MINUTES, 0))
-		calendar.set(Calendar.SECOND, 0)
-		calendar.set(Calendar.MILLISECOND, 0)
-		if (System.currentTimeMillis() > calendar.timeInMillis) {
-			calendar.add(Calendar.DATE, 1)
-		}
+		val calendar = getScheduledCalendar(prefs.getInt(PREFS_HOURS, 0),
+				prefs.getInt(PREFS_MINUTES, 0))
 		val i = Intent(context?.applicationContext, AlarmService::class.java)
 		val pendingIntent = PendingIntent.getService(context?.applicationContext, 1, i,
 				0)
