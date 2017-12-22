@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.widget.CompoundButton
 import android.widget.RadioGroup
-import android.widget.TimePicker
 import com.google.zxing.integration.android.IntentIntegrator
 import com.steven.wakealarm.base.BaseActivity
 import com.steven.wakealarm.settings.SettingsActivity
@@ -41,13 +40,12 @@ class MainActivity : BaseActivity(), OnSharedPreferenceChangeListener {
 		}
 		DrawableCompat.setTint(settingsButton.drawable, if (theme == "dark") Color.LTGRAY else
 			Color.DKGRAY)
+
 		timePicker.apply {
-			setIs24HourView(false)
-			currentHour = prefs.getInt(PREFS_HOURS, 0)
-			currentMinute = prefs.getInt(PREFS_MINUTES, 0)
-			setOnTimeChangedListener { _: TimePicker, _: Int, _: Int ->
+			selectDate(getScheduledCalendar(prefs.getInt(PREFS_HOURS, 0),
+					prefs.getInt(PREFS_MINUTES, 0)))
+			setListener { _, _ ->
 				switch_alarm.isChecked = true
-				setRemainingTime()
 				scheduleAlarm()
 			}
 		}
@@ -58,26 +56,23 @@ class MainActivity : BaseActivity(), OnSharedPreferenceChangeListener {
 				if (radioGroup.checkedRadioIndex == 1
 						&& prefs.getString(getString(R.string.pref_key_barcode), "").isEmpty()) {
 					IntentIntegrator(this@MainActivity).initiateScan()
+					radioGroup.checkedRadioIndex = 0
 				}
 			}
 		}
-		switch_alarm.apply {
-			isChecked = prefs.getBoolean(PREFS_ENABLED, false)
-			setOnCheckedChangeListener { _: CompoundButton?, b: Boolean ->
-				if (b) scheduleAlarm() else cancelAlarm()
-			}
+		switch_alarm.setOnCheckedChangeListener { _: CompoundButton?, b: Boolean ->
+			if (b) scheduleAlarm() else cancelAlarm()
 		}
+
 		challengeBarcodeRadio.setTooltip(getString(R.string.barcode))
 		challengeNoneRadio.setTooltip(getString(R.string.none))
 		settingsButton.setTooltip("Settings")
-
 	}
 
 	override fun onResume() {
 		super.onResume()
-		if (prefs.getBoolean(PREFS_ENABLED, false)) {
-			setRemainingTime()
-		}
+		switch_alarm.isChecked = prefs.getBoolean(PREFS_ENABLED, false)
+		setRemainingTime()
 	}
 
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -88,6 +83,7 @@ class MainActivity : BaseActivity(), OnSharedPreferenceChangeListener {
 				prefs.edit()
 						.putString(getString(R.string.pref_key_barcode), barcodeResult.contents)
 						.apply()
+				challengeRadioGroup.checkedRadioIndex = 1
 			} else {
 				challengeRadioGroup.checkedRadioIndex = 0
 			}
@@ -97,8 +93,8 @@ class MainActivity : BaseActivity(), OnSharedPreferenceChangeListener {
 	override fun onPause() {
 		super.onPause()
 		prefs.edit()
-				?.putInt(PREFS_HOURS, timePicker.currentHour)
-				?.putInt(PREFS_MINUTES, timePicker.currentMinute)
+				?.putInt(PREFS_HOURS, timePicker.date.hours)
+				?.putInt(PREFS_MINUTES, timePicker.date.minutes)
 				?.putBoolean(PREFS_ENABLED, switch_alarm.isChecked)
 				?.apply()
 	}
@@ -119,7 +115,7 @@ class MainActivity : BaseActivity(), OnSharedPreferenceChangeListener {
 
 	private fun setRemainingTime() {
 		if (!switch_alarm.isChecked) return
-		val cal = getScheduledCalendar(timePicker.currentHour, timePicker.currentMinute)
+		val cal = getScheduledCalendar(timePicker.date.hours, timePicker.date.minutes)
 		RemainingTimeTV?.text = formatTimeLeft(cal.timeInMillis - System.currentTimeMillis())
 	}
 
@@ -127,8 +123,8 @@ class MainActivity : BaseActivity(), OnSharedPreferenceChangeListener {
 		val i = Intent(this, AlarmService::class.java)
 		val pendingIntent = PendingIntent.getService(applicationContext, 1, i,
 				0)
-		val calendar = getScheduledCalendar(timePicker.currentHour, timePicker.currentMinute)
-		RemainingTimeTV?.text = formatTimeLeft(calendar.timeInMillis - System.currentTimeMillis())
+		val calendar = getScheduledCalendar(timePicker.date.hours, timePicker.date.minutes)
+		setRemainingTime()
 		if (is21OrLater()) {
 			val showIntent = Intent(applicationContext, MainActivity::class.java)
 			val showPendingIntent = PendingIntent.getActivity(applicationContext, 0, showIntent,

@@ -1,86 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-	xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-	<TimePicker
-		android:id="@+id/timePicker"
-		android:layout_width="wrap_content"
-		android:layout_height="0dp"
-		android:gravity="center"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintStart_toStartOf="parent"
-		app:layout_constraintTop_toTopOf="parent"/>
+    <com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
+        android:id="@+id/timePicker"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/guide"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:picker_displayDays="false"
+        app:picker_mustBeOnFuture="true"
+        app:picker_selectedTextColor="?attr/pickerSelectedTextColor"
+        app:picker_selectorColor="?attr/pickerSelectorColor" />
 
-	<android.support.v7.widget.SwitchCompat
-		android:id="@+id/switch_alarm"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:rotation="270"
-		android:scaleX="1.5"
-		android:scaleY="1.5"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toStartOf="@+id/settingsButton"
-		app:layout_constraintHorizontal_chainStyle="spread"
-		app:layout_constraintStart_toEndOf="@+id/challengeRadioGroup"
-		app:layout_constraintTop_toTopOf="parent"/>
+    <android.support.constraint.Guideline
+        android:id="@+id/guide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
 
-	<android.support.v7.widget.AppCompatImageButton
-		android:id="@+id/settingsButton"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:background="?attr/selectableItemBackgroundBorderless"
-		android:scaleType="fitXY"
-		android:src="@drawable/settings_black_24dp"
-		android:text="Settings"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toEndOf="parent"
-		app:layout_constraintStart_toEndOf="@+id/switch_alarm"
-		app:layout_constraintTop_toTopOf="parent"/>
+    <RadioGroup
+        android:id="@+id/challengeRadioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/RemainingTimeTV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/timePicker"
+        app:layout_constraintTop_toTopOf="parent">
 
-	<RadioGroup
-		android:id="@+id/challengeRadioGroup"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:orientation="vertical"
-		app:layout_constraintBottom_toBottomOf="parent"
-		app:layout_constraintEnd_toStartOf="@+id/switch_alarm"
-		app:layout_constraintHorizontal_chainStyle="spread"
-		app:layout_constraintStart_toEndOf="@+id/timePicker"
-		app:layout_constraintTop_toTopOf="parent">
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Challenge" />
 
-		<android.support.v7.widget.AppCompatTextView
-			android:layout_width="wrap_content"
-			android:layout_height="match_parent"
-			android:gravity="center"
-			android:text="Challenge"/>
+        <android.support.v7.widget.AppCompatRadioButton
+            android:id="@+id/challengeNoneRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableEnd="@drawable/block_black_24dp"
+            android:drawableRight="@drawable/block_black_24dp" />
 
-		<android.support.v7.widget.AppCompatRadioButton
-			android:id="@+id/challengeNoneRadio"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:drawableEnd="@drawable/block_black_24dp"
-			android:drawableRight="@drawable/block_black_24dp"/>
+        <android.support.v7.widget.AppCompatRadioButton
+            android:id="@+id/challengeBarcodeRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableEnd="@drawable/barcode_black_24dp"
+            android:drawableRight="@drawable/barcode_black_24dp"
+            android:gravity="center" />
+    </RadioGroup>
 
-		<android.support.v7.widget.AppCompatRadioButton
-			android:id="@+id/challengeBarcodeRadio"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:drawableEnd="@drawable/barcode_black_24dp"
-			android:drawableRight="@drawable/barcode_black_24dp"
-			android:gravity="center"/>
-	</RadioGroup>
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/RemainingTimeTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/switch_alarm"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/timePicker"
+        app:layout_constraintTop_toBottomOf="@+id/challengeRadioGroup"
+        tools:text="dsfsdfsfsfsfksjfnsnfks" />
 
-	<!--<TextView-->
-	<!--android:id="@+id/RemainingTimeTV"-->
-	<!--android:layout_width="wrap_content"-->
-	<!--android:layout_height="wrap_content"-->
-	<!--android:layout_marginTop="72dp"-->
-	<!--app:layout_constraintEnd_toEndOf="parent"-->
-	<!--app:layout_constraintStart_toStartOf="parent"-->
-	<!--app:layout_constraintTop_toBottomOf="@+id/switch_alarm"-->
-	<!--tools:text="dsfsdfsfsfsfksjfnsnfks"/>-->
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/switch_alarm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        app:layout_constraintBottom_toTopOf="@+id/settingsButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/timePicker"
+        app:layout_constraintTop_toBottomOf="@+id/RemainingTimeTV" />
+
+    <android.support.v7.widget.AppCompatImageButton
+        android:id="@+id/settingsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:scaleType="fitXY"
+        android:src="@drawable/settings_black_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/timePicker"
+        app:layout_constraintTop_toBottomOf="@+id/switch_alarm" />
 
 </android.support.constraint.ConstraintLayout>

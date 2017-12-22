@@ -1,18 +1,31 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-	<!-- Base application theme. -->
-	<style name="LightTheme" parent="PreferenceFixTheme.Light.NoActionBar">
-		<!-- Customize your theme here. -->
-		<item name="colorPrimary">@color/colorPrimaryLight</item>
-		<item name="colorPrimaryDark">@color/colorPrimaryLight</item>
-		<item name="colorAccent">@color/colorPrimaryLight</item>
-	</style>
 
-	<style name="DarkTheme" parent="PreferenceFixTheme.NoActionBar">
-		<!-- Customize your theme here. -->
-		<item name="colorPrimary">@color/colorPrimaryDark</item>
-		<item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-		<item name="colorAccent">@color/colorPrimaryDark</item>
-		<!--<item name="android:fitsSystemWindows">true</item>-->
-		<item name="android:windowTranslucentStatus" tools:targetApi="kitkat">true</item>
-	</style>
+    <style name="LightTheme" parent="PreferenceFixTheme.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimaryLight</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryLight</item>
+        <item name="colorAccent">@color/colorPrimaryLight</item>
+        <item name="pickerSelectorColor">@color/colorPrimaryLight</item>
+        <item name="pickerSelectedTextColor">@color/colorPrimaryLight</item>
+        <item name="android:navigationBarColor" tools:targetApi="lollipop">
+            @color/colorPrimaryLight
+        </item>
+
+    </style>
+
+    <style name="DarkTheme" parent="PreferenceFixTheme.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimaryDark</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorPrimaryDark</item>
+        <item name="android:statusBarColor" tools:targetApi="lollipop">@android:color/transparent
+        </item>
+        <item name="android:navigationBarColor" tools:targetApi="lollipop">
+            @android:color/transparent
+        </item>
+        <item name="pickerSelectorColor">@color/colorPrimaryDark</item>
+        <item name="pickerSelectedTextColor">@color/colorPrimaryDark</item>
+
+    </style>
+
+    <attr name="pickerSelectorColor" format="color" />
+    <attr name="pickerSelectedTextColor" format="color" />
 </resources>

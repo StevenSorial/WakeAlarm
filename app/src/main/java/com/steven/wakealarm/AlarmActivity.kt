@@ -2,13 +2,13 @@ package com.steven.wakealarm
 
 import android.content.Intent
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.view.WindowManager
 import android.widget.Toast
 import com.google.zxing.integration.android.IntentIntegrator
 import com.google.zxing.integration.android.IntentResult
 import com.steven.wakealarm.base.BaseActivity
 import com.steven.wakealarm.utils.PREFS_CHALLENGE
+import com.steven.wakealarm.utils.PREFS_ENABLED
 import kotlinx.android.synthetic.main.activity_alarm.*
 
 class AlarmActivity : BaseActivity() {
@@ -19,7 +19,7 @@ class AlarmActivity : BaseActivity() {
 		window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
 		window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
 		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-		val prefs = PreferenceManager.getDefaultSharedPreferences(this)
+		prefs.edit()?.putBoolean(PREFS_ENABLED, false)?.apply()
 		btn_dismiss.setOnClickListener {
 			val challenge = prefs.getInt(PREFS_CHALLENGE, 0)
 			when (challenge) {

@@ -15,7 +15,7 @@ abstract class BaseActivity : AppCompatActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		prefs = PreferenceManager.getDefaultSharedPreferences(this)
-		theme = prefs.getString(getString(R.string.pref_key_theme), "light")
+		theme = prefs.getString(getString(R.string.pref_key_theme), "dark")
 		setTheme(if (theme == "dark") R.style.DarkTheme else R.style.LightTheme)
 		Log.d(TAG, "Activity Created")
 	}

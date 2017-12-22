@@ -14,7 +14,6 @@ import android.os.IBinder
 import android.preference.PreferenceManager
 import android.support.v4.app.NotificationCompat
 import android.util.Log
-import com.steven.wakealarm.utils.PREFS_ENABLED
 import com.steven.wakealarm.utils.is21OrLater
 import com.steven.wakealarm.utils.setVolume
 import java.lang.Exception
@@ -58,13 +57,13 @@ class AlarmService : Service() {
 	}
 
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-		playAlarm()
-		startForegroundService()
 		val i = Intent(this, AlarmActivity::class.java)
 		i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
 				Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS or
 				Intent.FLAG_ACTIVITY_SINGLE_TOP
 		startActivity(i)
+		playAlarm()
+		startForegroundService()
 		return START_STICKY
 	}
 
@@ -73,9 +72,6 @@ class AlarmService : Service() {
 		mp.stop()
 		mp.release()
 		am.setStreamVolume(AudioManager.STREAM_ALARM, originalVolume, 0)
-		sharedPreferences.edit()
-				?.putBoolean(PREFS_ENABLED, false)
-				?.apply()
 		super.onDestroy()
 		Log.d(TAG, "Service Destroyed")
 	}
