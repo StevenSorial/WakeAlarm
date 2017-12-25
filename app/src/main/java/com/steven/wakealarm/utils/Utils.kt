@@ -69,10 +69,3 @@ fun getActivity(context: Context): Activity? {
 	}
 	return null
 }
-//fun getActivity(context: Context): Activity? {
-//	if (context is AppCompatActivity) return context
-//	if (context is ContextWrapper) return getActivity(context.baseContext)
-//	return null
-//}
-//
-

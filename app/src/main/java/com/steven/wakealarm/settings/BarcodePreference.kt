@@ -41,7 +41,6 @@ class BarcodePreference : Preference {
 	override fun setSummary(summary: CharSequence?) {
 		super.setSummary(summary)
 		this.summary = summary.toString()
-		Log.d("BarcodePreference", "summary" + summary)
 	}
 
 	override fun getSummary(): CharSequence? {
