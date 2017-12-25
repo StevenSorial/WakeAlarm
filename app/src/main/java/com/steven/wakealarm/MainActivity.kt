@@ -145,8 +145,11 @@ class MainActivity : BaseActivity(), OnSharedPreferenceChangeListener {
 
 	private fun cancelAlarm() {
 		val intent = Intent(this, AlarmService::class.java)
-		val pendingIntent = PendingIntent.getService(applicationContext, 1, intent,
-				0)
+		val pendingIntent = if (is26OrLater()) {
+			PendingIntent.getForegroundService(applicationContext, 1, intent, 0)
+		} else {
+			PendingIntent.getService(applicationContext, 1, intent, 0)
+		}
 		alarmManager.cancel(pendingIntent)
 		RemainingTimeTV?.text = ""
 	}
