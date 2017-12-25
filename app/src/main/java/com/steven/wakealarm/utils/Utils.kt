@@ -8,7 +8,6 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
-import android.os.Build
 import android.telephony.TelephonyManager
 import java.util.Calendar
 
@@ -18,8 +17,9 @@ const val PREFS_AM_PM = "am_pm"
 const val PREFS_ENABLED = "enabled"
 const val PREFS_CHALLENGE = "challenge"
 //const val PREFS_BARCODE = "barcode"
-
 const val PREFS_VERSION_CODE = "version_code"
+
+const val NOTIFICATION_CHANNEL_ID = "main_channel"
 
 fun isDeviceCharging(context: Context): Boolean {
 	val intent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
@@ -34,18 +34,6 @@ fun formatTimeLeft(millis: Long): String {
 	if (hours == 0L) return "$minutes Minutes Left"
 	else return "$hours Hours and $minutes Minutes Left"
 }
-
-fun is17OrLater(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1
-
-fun is19OrLater(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT
-
-fun is21OrLater(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
-
-fun is23OrLater(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-
-fun is24OrLater(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-
-fun is26OrLater(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 
 fun getScheduledCalendar(hour: Int, minute: Int): Calendar {
 	return Calendar.getInstance().apply {

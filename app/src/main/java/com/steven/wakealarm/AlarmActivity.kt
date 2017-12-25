@@ -1,5 +1,6 @@
 package com.steven.wakealarm
 
+import android.app.KeyguardManager
 import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
@@ -9,6 +10,7 @@ import com.google.zxing.integration.android.IntentResult
 import com.steven.wakealarm.base.BaseActivity
 import com.steven.wakealarm.utils.PREFS_CHALLENGE
 import com.steven.wakealarm.utils.PREFS_ENABLED
+import com.steven.wakealarm.utils.is27OrLater
 import kotlinx.android.synthetic.main.activity_alarm.*
 
 class AlarmActivity : BaseActivity() {
@@ -16,8 +18,13 @@ class AlarmActivity : BaseActivity() {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		setContentView(R.layout.activity_alarm)
-		window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
-		window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+		if (is27OrLater()) {
+			setTurnScreenOn(true)
+			setShowWhenLocked(true)
+		} else {
+			window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
+			window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON)
+		}
 		window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 		prefs.edit()?.putBoolean(PREFS_ENABLED, false)?.apply()
 		btn_dismiss.setOnClickListener {

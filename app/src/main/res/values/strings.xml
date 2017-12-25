@@ -1,25 +1,27 @@
 <resources>
-	<string name="app_name">Wake Alarm</string>
+    <string name="app_name">Wake Alarm</string>
 
-	<string name="dismiss">Dismiss</string>
-	<string name="none">None</string>
-	<string name="barcode">Barcode</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="none">None</string>
+    <string name="barcode">Barcode</string>
 
-	<string name="pref_key_theme" translatable="false">theme</string>
-	<string name="pref_key_ringtone" translatable="false">ringtone</string>
-	<string name="pref_key_barcode" translatable="false">barcode</string>
+    <string name="pref_key_theme" translatable="false">theme</string>
+    <string name="pref_key_ringtone" translatable="false">ringtone</string>
+    <string name="pref_key_barcode" translatable="false">barcode</string>
 
-	<string name="pref_title_theme">Theme</string>
-	<string name="pref_title_ringtone">Ringtone</string>
-	<string name="pref_title_barcode">Change Barcode</string>
+    <string name="pref_title_theme">Theme</string>
+    <string name="pref_title_ringtone">Ringtone</string>
+    <string name="pref_title_barcode">Change Barcode</string>
 
-	<string name="pref_theme_label_light">Light</string>
-	<string name="pref_theme_label_dark">Dark</string>
+    <string name="pref_theme_label_light">Light</string>
+    <string name="pref_theme_label_dark">Dark</string>
 
-	<string name="pref_theme_value_light" translatable="false">light</string>
-	<string name="pref_theme_value_dark" translatable="false">dark</string>
-	<string name="pref_theme_default" translatable="false">@string/pref_theme_value_dark</string>
+    <string name="pref_theme_value_light" translatable="false">light</string>
+    <string name="pref_theme_value_dark" translatable="false">dark</string>
+    <string name="pref_theme_default" translatable="false">@string/pref_theme_value_dark</string>
 
-	<string name="pref_summary_barcode_empty">No Barcode is set</string>
+    <string name="pref_summary_barcode_empty">No Barcode is set</string>
+
+    <string name="channel_name">Alarms</string>
 
 </resources>

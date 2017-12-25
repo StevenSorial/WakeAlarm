@@ -14,6 +14,7 @@ import com.steven.wakealarm.utils.getScheduledCalendar
 import com.steven.wakealarm.utils.is19OrLater
 import com.steven.wakealarm.utils.is21OrLater
 import com.steven.wakealarm.utils.is24OrLater
+import com.steven.wakealarm.utils.is26OrLater
 
 class BootReceiver : BroadcastReceiver() {
 
@@ -32,8 +33,13 @@ class BootReceiver : BroadcastReceiver() {
 		val calendar = getScheduledCalendar(prefs.getInt(PREFS_HOURS, 0),
 				prefs.getInt(PREFS_MINUTES, 0))
 		val i = Intent(context?.applicationContext, AlarmService::class.java)
-		val pendingIntent = PendingIntent.getService(context?.applicationContext, 1, i,
-				0)
+
+		val pendingIntent = if (is26OrLater()) {
+			PendingIntent.getForegroundService(context?.applicationContext, 1, i, 0)
+		} else {
+			PendingIntent.getService(context?.applicationContext, 1, i, 0)
+		}
+
 		if (is21OrLater()) {
 			val showIntent = Intent(context?.applicationContext, MainActivity::class.java)
 			val showPendingIntent = PendingIntent.getActivity(context?.applicationContext, 0,

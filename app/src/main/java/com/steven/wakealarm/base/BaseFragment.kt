@@ -17,7 +17,7 @@ abstract class BaseFragment : Fragment() {
 		Log.d(TAG, "Fragment Created")
 	}
 
-	override fun onCreateView(inflater: LayoutInflater?,
+	override fun onCreateView(inflater: LayoutInflater,
 							  container: ViewGroup?, savedInstanceState: Bundle?): View? {
 		Log.d(TAG, "Fragment View Created")
 		return super.onCreateView(inflater, container, savedInstanceState)

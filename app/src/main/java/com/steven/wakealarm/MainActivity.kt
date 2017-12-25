@@ -23,6 +23,7 @@ import com.steven.wakealarm.utils.formatTimeLeft
 import com.steven.wakealarm.utils.getScheduledCalendar
 import com.steven.wakealarm.utils.is19OrLater
 import com.steven.wakealarm.utils.is21OrLater
+import com.steven.wakealarm.utils.is26OrLater
 import com.steven.wakealarm.utils.setTooltip
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -121,8 +122,11 @@ class MainActivity : BaseActivity(), OnSharedPreferenceChangeListener {
 
 	private fun scheduleAlarm() {
 		val i = Intent(this, AlarmService::class.java)
-		val pendingIntent = PendingIntent.getService(applicationContext, 1, i,
-				0)
+		val pendingIntent = if (is26OrLater()) {
+			PendingIntent.getForegroundService(applicationContext, 1, i, 0)
+		} else {
+			PendingIntent.getService(applicationContext, 1, i, 0)
+		}
 		val calendar = getScheduledCalendar(timePicker.date.hours, timePicker.date.minutes)
 		setRemainingTime()
 		if (is21OrLater()) {

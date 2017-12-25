@@ -14,12 +14,11 @@ import android.os.IBinder
 import android.preference.PreferenceManager
 import android.support.v4.app.NotificationCompat
 import android.util.Log
+import com.steven.wakealarm.utils.NOTIFICATION_CHANNEL_ID
 import com.steven.wakealarm.utils.is21OrLater
 import com.steven.wakealarm.utils.setVolume
 import java.lang.Exception
 import kotlin.math.log
-
-private const val VOLUME_STEP_DELAY = 1000L
 
 class AlarmService : Service() {
 
@@ -27,13 +26,18 @@ class AlarmService : Service() {
 
 	override fun onBind(intent: Intent?): IBinder? = null
 
-	private lateinit var am: AudioManager
-	private lateinit var sharedPreferences: SharedPreferences
 	private lateinit var mp: MediaPlayer
 	private var currentStep = 0.0
 	private val maxStep = 50.0
+	private val VOLUME_STEP_DELAY = 1000L
 	private var originalVolume: Int = 0
 	private val handler = Handler()
+	private val am: AudioManager by lazy {
+		getSystemService(Context.AUDIO_SERVICE) as AudioManager
+	}
+	private val sharedPreferences: SharedPreferences by lazy {
+		PreferenceManager.getDefaultSharedPreferences(this)
+	}
 	private val fadeInRunnable = object : Runnable {
 		override fun run() {
 			am.setStreamVolume(AudioManager.STREAM_ALARM, am.getStreamMaxVolume(AudioManager
@@ -51,19 +55,17 @@ class AlarmService : Service() {
 	override fun onCreate() {
 		super.onCreate()
 		Log.d(TAG, "Service Created")
-		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
-		am = getSystemService(Context.AUDIO_SERVICE) as AudioManager
 		originalVolume = am.getStreamVolume(AudioManager.STREAM_ALARM)
 	}
 
 	override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+		startForegroundService()
 		val i = Intent(this, AlarmActivity::class.java)
 		i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or
 				Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS or
 				Intent.FLAG_ACTIVITY_SINGLE_TOP
 		startActivity(i)
 		playAlarm()
-		startForegroundService()
 		return START_STICKY
 	}
 
@@ -115,7 +117,7 @@ class AlarmService : Service() {
 		val notificationPendingIntent = PendingIntent.getActivity(this, 11,
 				intent, 0)
 
-		val notificationBuilder = NotificationCompat.Builder(this)
+		val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
 				.setContentTitle("Wake Up")
 				.setSmallIcon(R.mipmap.ic_launcher)
 				.setPriority(NotificationCompat.PRIORITY_MAX)
