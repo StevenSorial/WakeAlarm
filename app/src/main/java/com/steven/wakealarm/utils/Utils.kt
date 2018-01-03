@@ -11,16 +11,6 @@ import android.os.BatteryManager
 import android.telephony.TelephonyManager
 import java.util.Calendar
 
-const val PREFS_HOURS = "hours"
-const val PREFS_MINUTES = "minutes"
-const val PREFS_AM_PM = "am_pm"
-const val PREFS_ENABLED = "enabled"
-const val PREFS_CHALLENGE = "challenge"
-//const val PREFS_BARCODE = "barcode"
-const val PREFS_VERSION_CODE = "version_code"
-
-const val NOTIFICATION_CHANNEL_ID = "main_channel"
-
 fun isDeviceCharging(context: Context): Boolean {
 	val intent = context.registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
 	val status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1)
@@ -68,4 +58,14 @@ fun getActivity(context: Context): Activity? {
 		c = c.baseContext
 	}
 	return null
+}
+
+fun byteArrayToAddress(bytes: ByteArray): String {
+	val address = StringBuilder()
+	var sep = ""
+	for (b in bytes) {
+		address.append(sep).append(String.format("%02X", b))
+		sep = ":"
+	}
+	return address.toString()
 }
