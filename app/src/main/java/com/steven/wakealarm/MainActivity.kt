@@ -1,5 +1,6 @@
 package com.steven.wakealarm
 
+import android.app.Activity
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
@@ -14,6 +15,8 @@ import android.widget.RadioGroup
 import com.google.zxing.integration.android.IntentIntegrator
 import com.steven.wakealarm.base.BaseActivity
 import com.steven.wakealarm.settings.SettingsActivity
+import com.steven.wakealarm.utils.KEY_NFC_ID
+import com.steven.wakealarm.utils.NFC_REQUEST_CODE
 import com.steven.wakealarm.utils.PREFS_CHALLENGE
 import com.steven.wakealarm.utils.PREFS_ENABLED
 import com.steven.wakealarm.utils.PREFS_HOURS
@@ -55,8 +58,13 @@ class MainActivity : BaseActivity(), OnSharedPreferenceChangeListener {
 			setOnCheckedChangeListener { radioGroup: RadioGroup, i: Int ->
 				prefs.edit().putInt(PREFS_CHALLENGE, radioGroup.checkedRadioIndex).apply()
 				if (radioGroup.checkedRadioIndex == 1
-						&& prefs.getString(getString(R.string.pref_key_barcode), "").isEmpty()) {
+						&& prefs.getString(getString(R.string.pref_key_barcode), "").isBlank()) {
 					IntentIntegrator(this@MainActivity).initiateScan()
+					radioGroup.checkedRadioIndex = 0
+				} else if (radioGroup.checkedRadioIndex == 2
+						&& prefs.getString(getString(R.string.pref_key_nfc), "").isBlank()) {
+					val intent = Intent(this@MainActivity, NFCActivity::class.java)
+					startActivityForResult(intent, NFC_REQUEST_CODE)
 					radioGroup.checkedRadioIndex = 0
 				}
 			}
@@ -65,6 +73,7 @@ class MainActivity : BaseActivity(), OnSharedPreferenceChangeListener {
 			if (b) scheduleAlarm() else cancelAlarm()
 		}
 
+		challengeNFCRadio.setTooltip("NFC")
 		challengeBarcodeRadio.setTooltip(getString(R.string.barcode))
 		challengeNoneRadio.setTooltip(getString(R.string.none))
 		settingsButton.setTooltip("Settings")
@@ -79,15 +88,17 @@ class MainActivity : BaseActivity(), OnSharedPreferenceChangeListener {
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 		val barcodeResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-		if (barcodeResult != null) {
-			if (barcodeResult.contents != null) {
-				prefs.edit()
-						.putString(getString(R.string.pref_key_barcode), barcodeResult.contents)
-						.apply()
-				challengeRadioGroup.checkedRadioIndex = 1
-			} else {
-				challengeRadioGroup.checkedRadioIndex = 0
-			}
+		if (barcodeResult != null && barcodeResult.contents != null) {
+			prefs.edit()
+					.putString(getString(R.string.pref_key_barcode), barcodeResult.contents)
+					.apply()
+			challengeRadioGroup.checkedRadioIndex = 1
+
+		} else if (requestCode == NFC_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+			prefs.edit()
+					.putString(getString(R.string.pref_key_nfc), data!!.getStringExtra(KEY_NFC_ID))
+					.apply()
+			challengeRadioGroup.checkedRadioIndex = 2
 		}
 	}
 

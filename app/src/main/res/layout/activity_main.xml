@@ -5,15 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--<TimePicker-->
-    <!--android:id="@+id/timePicker"-->
-    <!--android:layout_width="0dp"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:gravity="center"-->
-    <!--app:layout_constraintEnd_toEndOf="parent"-->
-    <!--app:layout_constraintStart_toStartOf="parent"-->
-    <!--app:layout_constraintTop_toTopOf="parent" />-->
-
     <com.github.florent37.singledateandtimepicker.SingleDateAndTimePicker
         android:id="@+id/timePicker"
         android:layout_width="0dp"
@@ -63,6 +54,13 @@
             android:layout_height="wrap_content"
             android:drawableEnd="@drawable/barcode_black_24dp"
             android:drawableRight="@drawable/barcode_black_24dp"
+            android:gravity="center" />
+        <android.support.v7.widget.AppCompatRadioButton
+            android:id="@+id/challengeNFCRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableEnd="@drawable/nfc_black_24dp"
+            android:drawableRight="@drawable/nfc_black_24dp"
             android:gravity="center" />
     </RadioGroup>
 
