@@ -23,8 +23,7 @@
 	<string name="pref_theme_value_dark" translatable="false">dark</string>
 	<string name="pref_theme_default" translatable="false">@string/pref_theme_value_dark</string>
 
-	<string name="pref_summary_barcode_empty">No Barcode is set</string>
-	<string name="pref_summary_nfc_empty">No NFC is set</string>
+	<string name="pref_summary_empty">Not set</string>
 
 	<string name="channel_name">Alarms</string>
 

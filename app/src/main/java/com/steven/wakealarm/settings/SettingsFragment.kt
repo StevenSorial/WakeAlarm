@@ -9,11 +9,12 @@ import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat
 
 class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeListener {
 
-	lateinit var prefs: SharedPreferences
+	private val prefs: SharedPreferences by lazy {
+		PreferenceManager.getDefaultSharedPreferences(context)
+	}
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		prefs = PreferenceManager.getDefaultSharedPreferences(context)
 		prefs.registerOnSharedPreferenceChangeListener(this)
 	}
 
@@ -27,11 +28,11 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
 	}
 
 	override fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences?, key: String) {
-		if (key == getString(R.string.pref_key_barcode)) {
+		if (key == getString(R.string.pref_key_barcode) || key == getString(R.string.pref_key_nfc)) {
 			val preference = findPreference(key)
-			if (preference is BarcodePreference) {
-				val barcodeValue = sharedPreferences?.getString(key, null)
-				preference.summary = "Current Barcode is $barcodeValue"
+			if (preference is ClickPreference) {
+				preference.value = sharedPreferences?.getString(key, null)
+				preference.summary = preference.summary
 			}
 		}
 	}

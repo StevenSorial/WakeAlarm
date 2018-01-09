@@ -33,7 +33,7 @@ class SettingsActivity : BaseActivity(), OnSharedPreferenceChangeListener {
 	override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 		super.onActivityResult(requestCode, resultCode, data)
 		val barcodeResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
-		if (barcodeResult != null && barcodeResult.contents != null) {
+		if (barcodeResult?.contents != null) {
 			prefs.edit().putString(getString(R.string.pref_key_barcode), barcodeResult.contents)
 					.apply()
 		} else if (requestCode == NFC_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
