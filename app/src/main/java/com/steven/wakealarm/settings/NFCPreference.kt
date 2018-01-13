@@ -2,16 +2,17 @@ package com.steven.wakealarm.settings
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.TypedArray
-import android.support.v7.preference.Preference
 import android.util.AttributeSet
-import android.util.Log
 import com.steven.wakealarm.NFCActivity
 import com.steven.wakealarm.R
 import com.steven.wakealarm.utils.NFC_REQUEST_CODE
 import com.steven.wakealarm.utils.getActivity
+import com.steven.wakealarm.utils.isNFCAvailable
 
 class NFCPreference : ClickPreference {
+
+	private val nfcAvailable by lazy { isNFCAvailable(context) }
+
 	constructor(context: Context)
 			: super(context)
 
@@ -23,6 +24,15 @@ class NFCPreference : ClickPreference {
 
 	constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int)
 			: super(context, attrs, defStyleAttr, defStyleRes)
+
+	init {
+		isEnabled = nfcAvailable
+	}
+
+	override fun getSummary(): CharSequence? {
+		if (!nfcAvailable) return context.getString(R.string.pref_summary_nfc_not_available)
+		return super.getSummary()
+	}
 
 	override fun onClick() {
 		val activity = getActivity(context)

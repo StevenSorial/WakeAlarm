@@ -8,8 +8,10 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.graphics.Color
+import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.support.v4.graphics.drawable.DrawableCompat
+import android.view.View
 import android.widget.CompoundButton
 import android.widget.RadioGroup
 import com.google.zxing.integration.android.IntentIntegrator
@@ -27,6 +29,7 @@ import com.steven.wakealarm.utils.getScheduledCalendar
 import com.steven.wakealarm.utils.is19OrLater
 import com.steven.wakealarm.utils.is21OrLater
 import com.steven.wakealarm.utils.is26OrLater
+import com.steven.wakealarm.utils.isNFCAvailable
 import com.steven.wakealarm.utils.setTooltip
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -72,7 +75,7 @@ class MainActivity : BaseActivity(), OnSharedPreferenceChangeListener {
 		switch_alarm.setOnCheckedChangeListener { _: CompoundButton?, b: Boolean ->
 			if (b) scheduleAlarm() else cancelAlarm()
 		}
-
+		challengeNFCRadio.visibility = if(isNFCAvailable(this)) View.VISIBLE else View.GONE
 		challengeNFCRadio.setTooltip("NFC")
 		challengeBarcodeRadio.setTooltip(getString(R.string.barcode))
 		challengeNoneRadio.setTooltip(getString(R.string.none))

@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.IntentFilter
+import android.nfc.NfcAdapter
 import android.os.BatteryManager
 import android.telephony.TelephonyManager
 import java.util.Calendar
@@ -69,3 +70,6 @@ fun byteArrayToAddress(bytes: ByteArray): String {
 	}
 	return address.toString()
 }
+
+fun isNFCAvailable(context: Context): Boolean = NfcAdapter.getDefaultAdapter(context) != null
+
